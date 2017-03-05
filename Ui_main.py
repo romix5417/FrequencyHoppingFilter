@@ -200,6 +200,18 @@ class Ui_MainWindow(object):
         self.textEdit = QtWidgets.QTextEdit(self.centralWidget)
         self.textEdit.setGeometry(QtCore.QRect(30, 280, 391, 301))
         self.textEdit.setObjectName("textEdit")
+        self.label_15 = QtWidgets.QLabel(self.centralWidget)
+        self.label_15.setGeometry(QtCore.QRect(30, 100, 111, 31))
+        self.label_15.setObjectName("label_15")
+        self.spinBox = QtWidgets.QSpinBox(self.centralWidget)
+        self.spinBox.setGeometry(QtCore.QRect(140, 100, 41, 31))
+        self.spinBox.setObjectName("spinBox")
+        self.label_16 = QtWidgets.QLabel(self.centralWidget)
+        self.label_16.setGeometry(QtCore.QRect(180, 100, 61, 31))
+        self.label_16.setObjectName("label_16")
+        self.lineEdit_4 = QtWidgets.QLineEdit(self.centralWidget)
+        self.lineEdit_4.setGeometry(QtCore.QRect(240, 100, 61, 31))
+        self.lineEdit_4.setObjectName("lineEdit_4")
         MainWindow.setCentralWidget(self.centralWidget)
         self.label_netconnect_true = 0
         self.label_serial0connect_true = 0
@@ -325,6 +337,8 @@ class Ui_MainWindow(object):
         self.label_12.setText(_translate("MainWindow", "Mhz"))
         self.label_13.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt;\">中心频点:</span></p></body></html>"))
         self.label_14.setText(_translate("MainWindow", "Mhz"))
+        self.label_15.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt;\">串口设置:</span><span style=\" font-size:10pt;\">COM</span></p></body></html>"))
+        self.label_16.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt;\">波特率</span></p></body></html>"))
 
 #import res_rc
 
