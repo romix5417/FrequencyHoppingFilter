@@ -9,6 +9,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 from PyQt5.QtCore import QTimer
+from src import freqSerial
+from PyQt5.QtWidgets import QMessageBox
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -220,6 +222,8 @@ class Ui_MainWindow(object):
         self.sweepFreqstop_true = 0
         self.timer_flag = False
         
+        self.t = None #串口设备
+        
         self.retranslateUi(MainWindow)
         self.pushButton_netconnect.clicked.connect(self.netconnect)
         self.pushButton_serial0connect.clicked.connect(self.serial0connect)
@@ -233,7 +237,7 @@ class Ui_MainWindow(object):
     
     def programmer(self):
         freq = 1000
-        self.programStep = 0
+        self.programStep = 1
         self.programTimer = QTimer()
         self.programTimer.timeout.connect(self.programOperate) #计时结束调用operate()方法
         self.programTimer.start(freq)
@@ -258,16 +262,32 @@ class Ui_MainWindow(object):
             self.timer.stop()
     
     def sweepFreqShow(self):
-        freq = 10
+        freq = 5000
         self.step = 0
         self.qfreq = 0
+        
+        #设置扫频参数
+        data = bytearray([int(0xa4), int(0x1a)])
+        self.t.write(data)
+        print(self.t.readline())
+        
+        #启动扫频
+        data = bytearray([int(0xa1), int(0x00)])
+        self.t.write(data)
+        print(self.t.readline())
+        
         self.timer = QTimer()
         self.timer.timeout.connect(self.operate) #计时结束调用operate()方法
         self.timer.start(freq)
         self.timer_flag = True
+        self.lcdNumber.display(self.qfreq)
+        self.progressBar_2.setValue(self.step)
     
     def operate(self):
         if self.qfreq < 4096:
+            text=self.t.readline()
+            print(text)
+            self.textEdit.setText(str(text))
             self.qfreq += 1
             if self.qfreq/40 <= 100:
                 self.step = self.qfreq / 40
@@ -287,11 +307,23 @@ class Ui_MainWindow(object):
             self.label_netconnect.setPixmap(QtGui.QPixmap("res/image_green.png"))
 
     def serial0connect(self):
-        if self.label_serial0connect_true:
-            self.label_serial0connect_true = 0
-            self.label_serial0connect.setPixmap(QtGui.QPixmap("res/image_gray.png"))
-        else:
+        Sval = self.spinBox.value()
+        COM = "COM" + str(Sval)
+        baudrate = self.lineEdit_4.text()
+        try:
+            baudrate = int(baudrate)
+            print("Sval:%d,COM:%s,baudrate:%s" %(Sval,COM,baudrate))
+            self.t =freqSerial.connect_serial(COM, baudrate)
+        except Exception as e:
+            QMessageBox.warning(self.centralWidget, "警告","串口波特率不对", QMessageBox.Yes)
+            self.t = None
+            
+        if self.t is not None:
             self.label_serial0connect_true = 1
+        if self.label_serial0connect_true == 0:
+            self.label_serial0connect.setPixmap(QtGui.QPixmap("res/image_gray.png"))
+            QMessageBox.warning(self.centralWidget, "警告","打开串口失败", QMessageBox.Yes)
+        else:
             self.label_serial0connect.setPixmap(QtGui.QPixmap("res/image_green.png"))
     
     def serial1connect(self):
